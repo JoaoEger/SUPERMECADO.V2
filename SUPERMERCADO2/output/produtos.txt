@@ -1,0 +1,5 @@
+macarrao seco 4.5 0
+frutas vermelhas 4.6 26
+laranja 10 10
+maca prata 12.5 2
+banana branca 4.5 50

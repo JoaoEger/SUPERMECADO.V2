@@ -1,0 +1,100 @@
+===== VENDA FINALIZADA =====
+Data/Hora: 24/09/2025 21:56:04
+macarrao molhado x4 - R$ 20
+macarrao molhado x2 - R$ 10
+Total: R$ 30
+Metodo de pagamento: cartao 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 24/09/2025 22:15:15
+macarrao molhado x2 - R$ 10
+ovo maltine x10 - R$ 100
+macarrao seco x25 - R$ 112.5
+Total: R$ 222.5
+Metodo de pagamento: cartao 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 24/09/2025 22:22:39
+Total: R$ 0
+Metodo de pagamento: pix
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 24/09/2025 22:25:34
+ovo maltine  x11 - R$ 132
+Total: R$ 132
+Metodo de pagamento: 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 24/09/2025 22:28:29
+macarrao seco x12 - R$ 54
+Total: R$ 54
+Metodo de pagamento: pix
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 25/09/2025 07:33:21
+macarrao seco x5 - R$ 22.5
+rato frito x1 - R$ 10
+Total: R$ 32.5
+Metodo de pagamento: 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 25/09/2025 07:35:45
+frutas vermelhas x1 - R$ 4.6
+frutas vermelhas x2 - R$ 9.2
+frutas vermelhas x4 - R$ 18.4
+frutas vermelhas x8 - R$ 36.8
+Total: R$ 69
+Metodo de pagamento: 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 28/09/2025 23:10:01
+frutas vermelhas | 45 | R$ 207
+Total: R$ 207
+Metodo de pagamento: 45
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 28/09/2025 23:15:24
+frutas vermelhas | 12 | R$ 55.2
+Total: R$ 55.2
+Metodo de pagamento: 40
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 28/09/2025 23:17:26
+macarrao seco | 1 | R$ 4.5
+Total: R$ 4.5
+Metodo de pagamento: 
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 28/09/2025 23:22:56
+macarrao seco | 1 | R$ 4.5
+macarrao seco | 2 | R$ 9
+Total: R$ 13.5
+Metodo de pagamento: pix
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 29/09/2025 20:14:04
+macarrao seco | 2 | R$ 9
+maca prata | 2 | R$ 25
+frutas vermelhas | 2 | R$ 9.2
+Total: R$ 43.2
+Metodo de pagamento: Dinheiro
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 29/09/2025 20:15:11
+macarrao seco | 2 | R$ 9
+Total: R$ 9
+Metodo de pagamento: Pix
+=============================
+
