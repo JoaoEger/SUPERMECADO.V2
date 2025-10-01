@@ -25,6 +25,7 @@ struct produtos
     string nome; 
     float quanti; 
     double valorV; 
+    bool unidade;
 };
 
 int lerInteiro(){
@@ -38,6 +39,21 @@ int lerInteiro(){
         } else{
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
             return valor; 
+        }
+    }
+}
+
+double lerDouble(){
+    double valor;
+    while(true){
+        cin >> valor;
+        if(cin.fail()){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(),'\n');
+            cout << "Entrada invalida, digite um numero: ";
+        }else{
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return valor;
         }
     }
 }
@@ -61,7 +77,7 @@ void salvarProduto(produtos &p){
             cout << "Erro ao abrir o arquivo para salvar" << endl;
             return;
         }
-    arquivo << p.nome << " " << p.valorV << " " << p.quanti << endl;
+    arquivo << p.nome << ";" << p.valorV << ";" << p.unidade << ";" << p.quanti << endl;
     arquivo.close();
 
 }
@@ -77,13 +93,23 @@ void carregarProdutos(produtos p[], int &qnt) {
     string linha;
     qnt = 0;
     while (getline(arquivo, linha)) {
-        size_t pos1 = linha.find_last_of(' '); //Procura a posição do último espaço na linha
-        size_t pos2 = linha.find_last_of(' ', pos1 - 1); //Procura o penúltimo espaço, ou seja, o espaço antes do preço
+        stringstream ss(linha); 
+        string nome, valorStr, unidadeStr, quantiStr;
 
-        p[qnt].nome = linha.substr(0, pos2); //Pega os caracteres do início da linha até o penúltimo espaço pos2
-        p[qnt].valorV = atof(linha.substr(pos2 + 1, pos1 - pos2 - 1).c_str()); //pega os caracteres entre o penúltimo e o último espaço, ou seja, o preço do produto
-        p[qnt].quanti = atof(linha.substr(pos1 + 1).c_str()); // pega todos os caracteres após o último espaço, que é a quantidade em estoque.
-        qnt++;
+        if(getline(ss, nome, ';') && getline(ss, valorStr, ';') && getline(ss, unidadeStr, ';') && getline(ss, quantiStr, ';')){
+            p[qnt].nome = nome;
+
+            stringstream ss1(valorStr);
+            ss1 >> p[qnt].valorV;
+
+            stringstream ss2(unidadeStr);
+            ss2 >> p[qnt].unidade;
+
+            stringstream ss3(quantiStr);
+            ss3 >> p[qnt].quanti;
+
+            qnt++;
+        }
     }
 
     arquivo.close();
@@ -100,7 +126,7 @@ void cadastro(produtos p[], int &qnt){
     cout << "---CADASTRO PRODUTOS---" << endl;
     cout << "nome do produto: " << endl; 
     //para limpar o buffer
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, nomeTempor); //salvar nome dos produtos com espaço 
     
         //verifica se o produto ja foi cadastrado
@@ -110,12 +136,29 @@ void cadastro(produtos p[], int &qnt){
             return;
            }
         }
-    
+    int opc = 0;
+    char tecla;
     p[qnt].nome = nomeTempor;
-    cout << "digite o preco do produto: " << endl; 
-    cin  >> p[qnt].valorV; 
-    cout << "digite a quantidade em estoque: " << endl; 
-    cin >> p[qnt].quanti; 
+    cout << "digite o preco do produto: " << endl;
+    p[qnt].valorV = lerDouble();
+    do{
+        cout << "Este produto é em unidade ou em kg?" << endl;
+        cout << (opc == 0 ? ">  " : " ") << "KG\n";
+        cout << (opc == 1 ? ">  " : " ") << "UNIDADE\n";
+
+        setas(tecla, opc, 2);
+        system("cls");
+
+    }while(tecla != 13);
+
+    p[qnt].unidade = opc;
+
+    cout << "digite a quantidade em estoque: " << endl;
+    if(p[qnt].unidade == 0){
+        p[qnt].quanti = lerDouble();
+    }else if(p[qnt].unidade == 1){
+        p[qnt].quanti = lerInteiro();
+    };
     
     salvarProduto(p[qnt]);
 
@@ -125,9 +168,15 @@ qnt++;
 
 void ListarProdutos(produtos p[], int &qnt){
     cout << "--LISTA DE PRODUTOS--\n";
-    cout << "cod // nome // preco //     quantidade\n";
+    cout << "COD // NOME // PRECO // TIPO // QUNATIDADE\n";
     for(int i=0; i<qnt; i++){
-        cout << "(" << i+1<<") - " << p[i].nome << " -  R$:" << p[i].valorV << " - " << p[i].quanti << endl;  
+        string tipo;
+        if(p[i].unidade == 1){
+            tipo = "UN";
+        }else if(p[i].unidade == 0){
+            tipo = "KG";
+        }
+        cout << "(" << i+1<<") - " << p[i].nome << " -  R$:" << p[i].valorV << " - " << tipo << " - " << p[i].quanti << endl;  
     }
 }
 
@@ -187,24 +236,6 @@ void apagarProd(produtos p[], int &qnt) {
     }
 }
 
-void MENU(int &opc){
-    char tecla;
-    opc = 1;
-
-    do{
-
-    system("cls");
-    cout << "                                MNSP-01\n";
-    cout << "---MENU SUPERMERCADO---\n";
-    cout << (opc == 1 ? ">  ": " ") << "Produtos\n";
-    cout << (opc == 2 ? ">  " : " ") << "Vendas\n";
-    cout << (opc == 3 ? ">  " : " ") << "Relatorios\n";
-    cout << (opc == 0 ? ">  " : " ") << "Sair\n";
-    
-    setas(tecla, opc, 4);
-    }while (tecla != 13); 
-}
-
 void adcCarrinho(produtos p[], int &qnt){
     if(qnt == 0){
         cout << "Nenhum produto no estoque.\n";
@@ -218,13 +249,20 @@ void adcCarrinho(produtos p[], int &qnt){
     // Seleção do produto com setas
     do{
         system("cls");
+        string tipo;
         cout << "--- SELECIONE UM PRODUTO ---\n";
         for(int i = 0; i < qnt; i++){
-            if(i == opc)
+            if(i == opc){
                 cout << "> "; 
-            else
+            }else{
                 cout << "  ";
-            cout << p[i].nome << " - R$" << p[i].valorV << " - " << p[i].quanti << " unidades\n";
+            };
+            if(p[i].unidade == 1){
+                tipo = "UN";
+            }else if(p[i].unidade == 0){
+                tipo = "KG";
+            }
+            cout << p[i].nome << " - R$" << p[i].valorV << " - " << p[i].quanti << " - " << tipo << endl;
         }
 
         setas(tecla, opc, qnt);
@@ -232,19 +270,22 @@ void adcCarrinho(produtos p[], int &qnt){
     } while(tecla != 13); // Enter seleciona
 
     int cod = opc; // produto selecionado
-    int quant;
+    float quant;
     cout << "Digite a quantidade desejada: ";
-    cin >> quant;
-
+    if(p[cod].unidade == 1){
+        quant = lerInteiro();
+    }else if(p[cod].unidade == 0){
+        quant = lerDouble();
+        
+    }
     if(quant <= 0 || quant > p[cod].quanti){
         cout << "Quantidade invalida.\n";
         system("pause");
         return;
-    }
-
+    };
     // Salva no carrinho temporário
     ofstream temp("compra_temp.txt", ios::app);
-    temp << p[cod].nome << ";" << quant << ";" << p[cod].valorV << endl;
+    temp << p[cod].nome << ";" << p[cod].valorV << ";" << p[cod].unidade << ";" << quant << endl;
     temp.close();
 
     // Atualiza estoque
@@ -252,7 +293,7 @@ void adcCarrinho(produtos p[], int &qnt){
     ofstream arquivo("produtos.txt");
     for(int i = 0; i < qnt; i++){
         if(!p[i].nome.empty())
-            arquivo << p[i].nome << " " << p[i].valorV << " " << p[i].quanti << endl;
+            arquivo << p[i].nome << ";" << p[i].valorV << ";" << p[i].unidade << ";" << p[i].quanti << endl;
     }
     arquivo.close();
 
@@ -524,6 +565,24 @@ while(!sair){
             }
         }
     };
+}
+
+void MENU(int &opc){
+    char tecla;
+    opc = 1;
+
+    do{
+
+    system("cls");
+    cout << "                                MNSP-01\n";
+    cout << "---MENU SUPERMERCADO---\n";
+    cout << (opc == 1 ? ">  " : " ") << "Produtos\n";
+    cout << (opc == 2 ? ">  " : " ") << "Vendas\n";
+    cout << (opc == 3 ? ">  " : " ") << "Relatorios\n";
+    cout << (opc == 0 ? ">  " : " ") << "Sair\n";
+    
+    setas(tecla, opc, 4);
+    }while (tecla != 13); 
 }
 
 int main(){

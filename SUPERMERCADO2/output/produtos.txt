@@ -1,5 +1,13 @@
-macarrao seco 4.5 0
-frutas vermelhas 4.6 26
-laranja 10 10
-maca prata 12.5 2
-banana branca 4.5 50
+teste2;50;0;10
+teste3;20;0;0
+tete novamente;30;0;0
+testt;20;1;20
+testea;10;0;30
+testej;20;0;1.5
+testeloco;10;1;0
+japa;10;0;0
+tst;210;1;15
+feijao carioca;10;0;10
+feijao sla;20;0;10
+maca louca;10;0;10
+unidade;10;0;10

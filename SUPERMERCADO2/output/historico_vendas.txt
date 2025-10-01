@@ -98,3 +98,16 @@ Total: R$ 9
 Metodo de pagamento: Pix
 =============================
 
+===== VENDA FINALIZADA =====
+Data/Hora: 30/09/2025 21:02:25
+japa | 10 | R$ 10
+teste3 | 20 | R$ 0
+teste3 | 20 | R$ 0
+teste3 | 20 | R$ 0
+feijao sla | 20 | R$ 20
+testeloco | 10 | R$ 10
+tst | 210 | R$ 210
+Total: R$ 250
+Metodo de pagamento: 
+=============================
+
