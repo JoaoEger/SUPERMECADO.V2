@@ -1,13 +1,12 @@
-teste2;50;0;10
-teste3;20;0;0
-tete novamente;30;0;0
-testt;20;1;20
-testea;10;0;30
+teste2;50;0;1
+teste3;20;0;1
+tete novamente;30;0;1
+testt;20;1;2
+testea;10;0;12.8
 testej;20;0;1.5
-testeloco;10;1;0
-japa;10;0;0
-tst;210;1;15
-feijao carioca;10;0;10
+testeloco;10;1;1
+japa;10;0;1
+tst;210;1;14
+feijao carioca;10;0;9
 feijao sla;20;0;10
 maca louca;10;0;10
-unidade;10;0;10

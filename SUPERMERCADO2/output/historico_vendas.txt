@@ -111,3 +111,131 @@ Total: R$ 250
 Metodo de pagamento: 
 =============================
 
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 19:55:10
+teste2 | 50 | R$ 0
+testt | 20 | R$ 20
+Total: R$ 20
+Metodo de pagamento: aaa
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 19:58:28
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:00:38
+testt | 20 | R$ 20
+Total: R$ 20
+Metodo de pagamento: A Vista       0
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:01:19
+testt | 20 | R$ 20
+Total: R$ 20
+Metodo de pagamento: Em 3x sem juros       1
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:01:33
+testt | 20 | R$ 20
+Total: R$ 20
+Metodo de pagamento: Em 12x com 10% de juros       2
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:05:52
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:06:03
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 3x sem juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:06:19
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 12x com 10% de juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:08:32
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:08:41
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 3x sem juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:09:16
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 3x sem juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:09:27
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 12x com 10% de juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:11:12
+testea | 10 | R$ 0
+Total: R$ 0
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:23:49
+testea | 1 | R$ 10
+Total: R$ 9.5
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:24:12
+testea | 1 | R$ 10
+Total: R$ 10
+Metodo de pagamento: Em 3x sem juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 20:24:29
+testea | 1 | R$ 10
+Total: R$ 11
+Metodo de pagamento: Em 12x com 10% de juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 22:33:53
+testea | 1.2 | R$ 12
+tst | 1 | R$ 210
+Total: R$ 210.9
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 02/10/2025 22:45:35
+feijao carioca | 1 | R$ 10
+Total: R$ 9.5
+Metodo de pagamento: A Vista
+=============================
+

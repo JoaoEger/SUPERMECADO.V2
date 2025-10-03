@@ -32,10 +32,10 @@ int lerInteiro(){
     int valor; 
     while (true){
         cin >> valor; 
-        if (cin.fail()){
+        if (cin.fail() || cin.peek() == '.'){
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(),'\n'); //descarta a entrada invalida
-            cout << "Entrada invalida, digite um numero: ";
+            cin.ignore(numeric_limits<streamsize>::max(),'\n');
+            cout << "Entrada invalida, digite um numero inteiro: ";
         } else{
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
             return valor; 
@@ -81,7 +81,7 @@ void salvarProduto(produtos &p){
     arquivo.close();
 
 }
-
+//PRONTO
 void carregarProdutos(produtos p[], int &qnt) {
     ifstream arquivo("produtos.txt");
     if (!arquivo.is_open()) {
@@ -114,13 +114,13 @@ void carregarProdutos(produtos p[], int &qnt) {
 
     arquivo.close();
 }
-
+//PRONTO
 bool nomesIguais(string a, string b) {
     transform(a.begin(), a.end(), a.begin(), ::tolower);
     transform(b.begin(), b.end(), b.begin(), ::tolower);
     return a == b;
 }
-
+//PRONTO
 void cadastro(produtos p[], int &qnt){
     string nomeTempor;
     cout << "---CADASTRO PRODUTOS---" << endl;
@@ -165,10 +165,10 @@ void cadastro(produtos p[], int &qnt){
 qnt++;
 
 }
-
+//PRONTO
 void ListarProdutos(produtos p[], int &qnt){
     cout << "--LISTA DE PRODUTOS--\n";
-    cout << "COD // NOME // PRECO // TIPO // QUNATIDADE\n";
+    cout << "COD | NOME | PRECO | QUANTIDADE | TIPO\n";
     for(int i=0; i<qnt; i++){
         string tipo;
         if(p[i].unidade == 1){
@@ -176,10 +176,10 @@ void ListarProdutos(produtos p[], int &qnt){
         }else if(p[i].unidade == 0){
             tipo = "KG";
         }
-        cout << "(" << i+1<<") - " << p[i].nome << " -  R$:" << p[i].valorV << " - " << tipo << " - " << p[i].quanti << endl;  
+        cout << "(" << i+1<<") | " << p[i].nome << " |  R$:" << p[i].valorV << " | " << p[i].quanti << " | " << tipo << endl;  
     }
 }
-
+//PRONTO
 void apagarProd(produtos p[], int &qnt) {
     if (qnt == 0) {
         cout << "Nenhum produto cadastrado." << endl;
@@ -209,13 +209,13 @@ void apagarProd(produtos p[], int &qnt) {
 
     string linha;
     bool removido = false;
+    string nome;
 
     while (getline(arquivo, linha)) {
-        size_t pos1 = linha.find_last_of(' ');
-        size_t pos2 = linha.find_last_of(' ', pos1 - 1);
-        string nomeLinha = linha.substr(0, pos2);
+        stringstream ss(linha);
+        getline(ss, nome, ';');
 
-        if (nomesIguais(nomeLinha, nomeRemover)) {
+        if (nomesIguais(nome, nomeRemover)) {
             removido = true;
             continue; // não grava
         }
@@ -235,7 +235,7 @@ void apagarProd(produtos p[], int &qnt) {
         cout << "Erro: produto nao encontrado no arquivo!" << endl;
     }
 }
-
+//PRONTO
 void adcCarrinho(produtos p[], int &qnt){
     if(qnt == 0){
         cout << "Nenhum produto no estoque.\n";
@@ -300,7 +300,7 @@ void adcCarrinho(produtos p[], int &qnt){
     cout << "Produto adicionado ao carrinho!\n";
     system("pause");
 }
-
+//parcialmente, falta a parte da separação dos meses
 void finalizarCompra() {
     ifstream temp("compra_temp.txt");
     if (!temp.is_open()) {
@@ -310,46 +310,72 @@ void finalizarCompra() {
     }
 
     string metodoPagamento;
-    cout << "Digite o metodo de pagamento (Dinheiro/Cartao/Pix): ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, metodoPagamento);
+    int opc = 0;
+    char tecla;
+    while(tecla != 13){
+        system("cls");
+        cout << "Selecione o metodo de pagamento: \n";
+        cout << (opc == 0 ? "> ": " ") << "A Vista (5% de desconto)\n";
+        cout << (opc == 1 ? "> ": " ") << "Em 3 vezes (sem juros)\n";
+        cout << (opc == 2 ? "> ": " ") << "Em 12 vezes (10% de juros)\n";
+
+        setas(tecla, opc, 3);
+        
+        if(opc == 0){
+            metodoPagamento = "A Vista";
+        }else if(opc == 1){
+            metodoPagamento = "Em 3x sem juros";
+        }else if(opc == 2){
+            metodoPagamento = "Em 12x com 10% de juros";
+        };
+    }
 
     ofstream log("historico_vendas.txt", ios::app);
     if (!log.is_open()) {
         cout << "Erro ao abrir log de vendas!\n";
         return;
     }
-
+    
+    cout << "===== VENDA FINALIZADA =====\n";
     log << "===== VENDA FINALIZADA =====\n";
+    cout << "Data/Hora: " << getHorarioAtual() << "\n";
     log << "Data/Hora: " << getHorarioAtual() << "\n";
+    
 
     string linha;
     double total = 0;
     while (getline(temp, linha)) {
-        size_t p1 = linha.find(';');
-        size_t p2 = linha.find(';', p1 + 1);
-
-        string nome = linha.substr(0, p1);
-        string qtdStr = linha.substr(p1 + 1, p2 - p1 - 1);
-        string precoStr = linha.substr(p2 + 1);
-
-        int qtd;
+       stringstream ss(linha);
+        string nome, valorStr, unidadeStr, quantiStr;
         double preco;
+        float qtd;
 
-        stringstream ss1(qtdStr);
-        ss1 >> qtd;
+        if(getline(ss, nome, ';') && getline(ss, valorStr, ';') && getline(ss, unidadeStr, ';') && getline(ss, quantiStr, ';')){
+            stringstream ss1(valorStr);
+            ss1 >> preco;
 
-        stringstream ss2(precoStr);
-        ss2 >> preco;
+            stringstream ss2(quantiStr);
+            ss2 >> qtd;
+        }
 
         double subtotal = qtd * preco;
         total += subtotal;
 
+
+        cout << nome << " | " << qtd << " | R$ " << subtotal << "\n";
         log << nome << " | " << qtd << " | R$ " << subtotal << "\n";
     }
+        if(opc == 0){
+            total *= 0.95;
+        }else if(opc == 2){
+            total *= 1.10;
+        };
 
+    cout << "Total: R$ " << total << endl;
     log << "Total: R$ " << total << endl;
+    cout << "Metodo de pagamento: " << metodoPagamento << endl;
     log << "Metodo de pagamento: " << metodoPagamento << endl;
+    cout << "=============================\n\n";
     log << "=============================\n\n";
 
     log.close();
@@ -360,11 +386,11 @@ void finalizarCompra() {
     cout << "Compra finalizada com sucesso!\n";
     system("pause");
 }
-
+//PRONTO
 void logVendas(){
     ifstream log("historico_vendas.txt");
     if(!log.is_open()){
-        cout << "nenhuma venda registrada ainda\n";
+        cout << "Nenhuma venda registrada ainda\n";
         system("pause");
         return; 
     }
@@ -374,16 +400,14 @@ void logVendas(){
     while(getline(log, linha)){
         cout << linha << endl;
     }
-    cout << "\n===================================\n";
 
     log.close();
     system("pause");
 
-
 }
-
-void maioresVendas(){
-     ifstream log("historico_vendas.txt");
+//PRONTO
+void maioresVendas() {
+    ifstream log("historico_vendas.txt");
     if (!log.is_open()) {
         cout << "Nenhuma venda registrada ainda.\n";
         system("pause");
@@ -392,58 +416,63 @@ void maioresVendas(){
 
     string nomes[MAX];
     int qntds[MAX];
-    int totalProdutos=0; 
+    int totalProdutos = 0;
+    double totalVendas = 0;
 
     string linha;
-    while(getline(log, linha)){
-        if (linha.size() > 2 && linha[0] == '-'){
-            string nome;
-            int qtd=0;
+    while (getline(log, linha)) {
+        if (linha.find(" | ") != string::npos && linha.find("R$") != string::npos) {
             stringstream ss(linha);
-            char lixo;
-            ss>>lixo; // para ignorar o '-'
-            getline(ss, nome, '|'); //pega o nome ate '|'
-            ss>>qtd; //pega a quantidade
+            string nome, qtdStr, lixo;
+            double subtotal;
+            int qtd;
 
-             // remover espaços extras do nome
-            while (!nome.empty() && (nome[nome.size() - 1] == ' ' || nome[nome.size() - 1] == '\t')) {
-    nome.erase(nome.size() - 1);
-}
+            getline(ss, nome, '|'); 
+            getline(ss, qtdStr, '|'); 
+            ss >> lixo >> subtotal; 
 
-                 // Verifica se já existe no vetor
-                bool encontrado = false;
-                for(int i=0; i<totalProdutos; i++){
-                    if(nomes[i] == nome){
-                        qntds[i] +=qtd; 
-                        encontrado = true;
-                        break;
-                    }
+            while (!nome.empty() && (nome[0] == ' ' || nome[0] == '\t'))
+                nome.erase(0, 1);
+            while (!nome.empty() && (nome.back() == ' ' || nome.back() == '\t'))
+                nome.pop_back();
+
+            stringstream ssQtd(qtdStr);
+            ssQtd >> qtd;
+
+            bool encontrado = false;
+            for (int i = 0; i < totalProdutos; i++) {
+                if (nomes[i] == nome) {
+                    qntds[i] += qtd;
+                    encontrado = true;
+                    break;
                 }
+            }
 
-                if(!encontrado && totalProdutos < MAX){
-
-                    nomes[totalProdutos] = nome; 
-                    qntds[totalProdutos] = qtd;
-                    totalProdutos++;
-                }
+            if (!encontrado && totalProdutos < MAX) {
+                nomes[totalProdutos] = nome;
+                qntds[totalProdutos] = qtd;
+                totalProdutos++;
+            }
+            totalVendas += subtotal;
         }
     }
-    
+
     cout << "\n=== PRODUTOS MAIS VENDIDOS ===\n";
     for (int i = 0; i < totalProdutos; i++) {
         cout << nomes[i] << " -> " << qntds[i] << " unidades vendidas\n";
     }
     cout << "==============================\n";
+    cout << "Total arrecadado com as vendas R$ "<< totalVendas << "\n(Ignorando juros ou descontos)\n";
 
     log.close();
     system("pause");
-
 }
-
+//PRONTO
 void produtosEmFalta(produtos p[], int &qnt){
     bool faltando = false;
     cout << "\nDigite a quantidade minima que quer consultar: ";
-    int qntMin = lerInteiro();  
+    int qntMin = lerInteiro();
+    string unidade;
 
     // Vetor auxiliar só com os produtos filtrados
     produtos filtrados[MAX];
@@ -458,7 +487,7 @@ void produtosEmFalta(produtos p[], int &qnt){
     }
 
     if (!faltando) {
-        cout << "✅ O estoque está abastecido.\n";
+        cout << "O estoque esta abastecido.\n";
         system("pause");
         return;
     }
@@ -476,18 +505,20 @@ void produtosEmFalta(produtos p[], int &qnt){
 
     // Mostrar os produtos em falta
     cout << "\n-- PRODUTOS EM FALTA (ordenados) --\n";
-    cout << "nome // preco // quantidade\n";
+    cout << "NOME | PRECO | QUANTIDADE | UNIDADE\n";
     for (int i = 0; i < qntFiltrados; i++) {
-        cout << filtrados[i].nome 
-             << " - R$ " << filtrados[i].valorV 
-             << " - " << filtrados[i].quanti << endl;
+        if(filtrados[i].unidade == 0){
+            unidade = "KG";
+        }else if(filtrados[i].unidade == 1){
+            unidade = "UN";
+        }
+        cout << filtrados[i].nome << " | R$ " << filtrados[i].valorV << " | " << filtrados[i].quanti << " | " << unidade <<endl;
     }
 
     cout << "=========================\n";
     system("pause");
 }
-
-
+//PRONTO
 void MenuRelatorios(produtos p[], int qnt){
         int opc = 1;
         char tecla;
@@ -514,7 +545,7 @@ while(!sair){
     } 
     
 }
-
+//PRONTO
 void MenuVendas(produtos p[], int &qnt){
     char tecla; 
     int opc = 1;
@@ -539,7 +570,7 @@ while(!sair){
         }
     }
 }
-
+//PRONTO
 void MENUProdutos(produtos p[], int &qnt){
     int opc=1;
     char tecla; 
@@ -566,7 +597,7 @@ while(!sair){
         }
     };
 }
-
+//PRONTO
 void MENU(int &opc){
     char tecla;
     opc = 1;
@@ -584,7 +615,7 @@ void MENU(int &opc){
     setas(tecla, opc, 4);
     }while (tecla != 13); 
 }
-
+//PRONTO
 int main(){
     produtos v[MAX];
     int qnt=0;
@@ -600,10 +631,10 @@ int main(){
         case 2: MenuVendas(v, qnt); break;
         case 3: MenuRelatorios(v, qnt); break;
         case 0:
-            cout << "saindo..." <<endl; 
+            cout << "Obrigado por acessar!" <<endl; 
             break;
         default: 
-            cout << "opcao invalida."<<endl;
+            cout << "Opcao invalida."<<endl;
         }
     }while(opc !=0);
 
