@@ -1,12 +1,6 @@
-teste2;50;0;1
-teste3;20;0;1
-tete novamente;30;0;1
-testt;20;1;2
-testea;10;0;12.8
-testej;20;0;1.5
-testeloco;10;1;1
 japa;10;0;1
-tst;210;1;14
-feijao carioca;10;0;9
-feijao sla;20;0;10
-maca louca;10;0;10
+feijao carioca;10;0;6
+feijao sla;20;0;8
+maca louca;10;0;9
+maca;10;0;10
+sagu de vinho;10;1;20

@@ -239,3 +239,70 @@ Total: R$ 9.5
 Metodo de pagamento: A Vista
 =============================
 
+===== VENDA FINALIZADA =====
+Data/Hora: 03/10/2025 15:25:06
+testea | 1 | R$ 10
+Total: R$ 10
+Metodo de pagamento: Em 3x sem juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 03/10/2025 15:26:04
+testea | 7.25873e-43 | R$ 0
+Total: R$ 0
+Metodo de pagamento: Em 12x com 10% de juros
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 03/10/2025 15:30:00
+teste3 | 1 | R$ 20
+testea | 1 | R$ 10
+Total: R$ 28.5
+Metodo de pagamento: A Vista
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 05/10/2025 17:47:55
+Total original: R$ 10
+Total final: R$ 9.5
+Parcelas: 1x de R$ 9.5
+Parcela 1: R$ 9.5 - Vencimento: 05/10/2025
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 05/10/2025 17:48:12
+Total original: R$ 10
+Total final: R$ 10
+Parcelas: 3x de R$ 3.33333
+Parcela 1: R$ 3.33333 - Vencimento: 05/10/2025
+Parcela 2: R$ 3.33333 - Vencimento: 05/11/2025
+Parcela 3: R$ 3.33333 - Vencimento: 05/12/2025
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 05/10/2025 17:49:42
+Total original: R$ 20
+Total final: R$ 6.95228e-310
+Parcelas: 1x de R$ 6.95228e-310
+Parcela 1: R$ 6.95228e-310 - Vencimento: 05/10/2025
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 05/10/2025 17:51:39
+Total original: R$ 20
+Total final: R$ 22
+Parcelas: 12x de R$ 1.83333
+Parcela 1: R$ 1.83333 - Vencimento: 05/10/2025
+Parcela 2: R$ 1.83333 - Vencimento: 05/11/2025
+Parcela 3: R$ 1.83333 - Vencimento: 05/12/2025
+Parcela 4: R$ 1.83333 - Vencimento: 05/01/2026
+Parcela 5: R$ 1.83333 - Vencimento: 05/02/2026
+Parcela 6: R$ 1.83333 - Vencimento: 05/03/2026
+Parcela 7: R$ 1.83333 - Vencimento: 05/04/2026
+Parcela 8: R$ 1.83333 - Vencimento: 05/05/2026
+Parcela 9: R$ 1.83333 - Vencimento: 05/06/2026
+Parcela 10: R$ 1.83333 - Vencimento: 05/07/2026
+Parcela 11: R$ 1.83333 - Vencimento: 05/08/2026
+Parcela 12: R$ 1.83333 - Vencimento: 05/09/2026
+=============================
+

@@ -1,16 +1,30 @@
 #include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <ctime>
-#include <limits>
-#include <algorithm>
-#include <conio.h>
-
-#define MAX 1000
+#include <string>//string, getline
+#include <sstream>//stringstream
+#include <fstream>//ifstream, ofstream
+#include <ctime>//time_t, tm, localtime, strftime
+#include <limits>//numeric_limits
+#include <algorithm>//transform
+#include <conio.h>//getch()
 using namespace std; 
 
-string getHorarioAtual() {
+#define MAX 1000
+//Adiciona uma quantidade de meses a uma data e retorna a nova data com os meses adicionados
+tm AdicionarMeses(tm data, int meses){
+    int ano = data.tm_year;
+    int mes = data.tm_mon + meses;
+
+    while(mes > 11){
+        mes -= 12;
+        ano += 1;
+    }
+
+    data.tm_mon = mes;
+    data.tm_year = ano;
+    return data;
+}
+//Retorna a data e hora atual formatadas como string (dd/mm/aaaa hh:mm:ss)
+string GetHorarioAtual() {
     time_t agora = time(0);
     tm *ltm = localtime(&agora);
 
@@ -19,16 +33,16 @@ string getHorarioAtual() {
 
     return string(buffer);
 }
-
-struct produtos
+//Struct referente aos produtos cadastrados no sistema
+struct Produtos
 {
     string nome; 
     float quanti; 
     double valorV; 
     bool unidade;
 };
-
-int lerInteiro(){
+//Lê e retorna um número inteiro validando a entrada
+int LerInteiro(){
     int valor; 
     while (true){
         cin >> valor; 
@@ -42,8 +56,8 @@ int lerInteiro(){
         }
     }
 }
-
-double lerDouble(){
+//Lê e retorna um número double validando a entrada
+double LerDouble(){
     double valor;
     while(true){
         cin >> valor;
@@ -57,8 +71,8 @@ double lerDouble(){
         }
     }
 }
-
-void setas(char &tecla, int &opc, int maxOpc) {
+//Lê a tecla apertada, e atualiza a opc referente ao valor da tecla
+void Setas(char &tecla, int &opc, int maxOpc) {
     tecla = getch();
 
     if (tecla == 72) { // cima
@@ -69,8 +83,8 @@ void setas(char &tecla, int &opc, int maxOpc) {
         if(opc >= maxOpc) opc = 0; 
 }
 }
-
-void salvarProduto(produtos &p){
+//Salva o produto no arquivo "produtos.txt"
+void SalvarProduto(Produtos &p){
 
     ofstream arquivo("produtos.txt", ios::app); 
         if (!arquivo.is_open()){
@@ -81,8 +95,8 @@ void salvarProduto(produtos &p){
     arquivo.close();
 
 }
-//PRONTO
-void carregarProdutos(produtos p[], int &qnt) {
+//Carrega os produtos do arquivo "produtos.txt" para o vetor p[]
+void CarregarProdutos(Produtos p[], int &qnt) {
     ifstream arquivo("produtos.txt");
     if (!arquivo.is_open()) {
         cout << "Arquivo nao encontrado. Comecando com estoque vazio." << endl;
@@ -114,59 +128,106 @@ void carregarProdutos(produtos p[], int &qnt) {
 
     arquivo.close();
 }
-//PRONTO
-bool nomesIguais(string a, string b) {
+// Compara nomes de produtos ignorando maiúsculas e minúsculas
+bool NomesIguais(string a, string b) {
     transform(a.begin(), a.end(), a.begin(), ::tolower);
     transform(b.begin(), b.end(), b.begin(), ::tolower);
     return a == b;
 }
-//PRONTO
-void cadastro(produtos p[], int &qnt){
+//Cadastra um novo produto ou atualiza um existente, validando nome, preço, tipo e quantidade
+void Cadastro(Produtos p[], int &qnt){
     string nomeTempor;
     cout << "---CADASTRO PRODUTOS---" << endl;
     cout << "nome do produto: " << endl; 
-    //para limpar o buffer
-    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, nomeTempor); //salvar nome dos produtos com espaço 
-    
+
+    getline(cin, nomeTempor); //salvar nome dos produtos com espaço
+
+    nomeTempor.erase(0, nomeTempor.find_first_not_of(' '));
+    nomeTempor.erase(nomeTempor.find_last_not_of(' ') + 1);
+
+    if(nomeTempor.empty()){
+    cout << "Erro, o nome nao pode ficar vazio"<< endl;
+    return; 
+    }
         //verifica se o produto ja foi cadastrado
         for(int i=0; i<qnt; i++){
-           if(nomesIguais(p[i].nome, nomeTempor)){
-            cout << "produto ja cadastrado."<<endl;
+            if(NomesIguais(p[i].nome, nomeTempor)){
+                int opc = 0;
+                char tecla;
+                do{
+                    system("cls");
+                    cout << "Produto ja cadastrado."<<endl;
+                    cout << "Deseja atualizar o valor ou quantiadade?" << endl;
+                    cout << (opc == 0 ? ">  " : " ") << "Nao" << endl;
+                    cout << (opc == 1 ? ">  " : " ") << "Sim" << endl;
+
+                    Setas(tecla, opc, 2);
+                    system("cls");
+                }while(tecla != 13);
+                    if(opc == 1){
+                        cout << "Digiter o preco do produto:" << endl;
+                        p[i].valorV = LerDouble();
+
+                        if(p[i].valorV < 0){
+                            cout << "Erro: o preco nao pode ser negativo." << endl;
+                            return;
+                        }
+                        cout << "Digite a quantidade em estoque:" << endl;
+                        if(p[i].unidade == 0){
+                            p[i].quanti = LerDouble();
+
+                        }else if(p[i].unidade == 1){
+                            p[i].quanti = LerInteiro();
+
+                            if(p[i].quanti < 0){
+                                cout << "Erro: a quantidade nao pode ser negativa." << endl;
+                                return;
+                            }
+                        }
+                    }
             return;
            }
         }
     int opc = 0;
     char tecla;
     p[qnt].nome = nomeTempor;
-    cout << "digite o preco do produto: " << endl;
-    p[qnt].valorV = lerDouble();
+    cout << "Digite o preco do produto: " << endl;
+    p[qnt].valorV = LerDouble();
+
+    if(p[qnt].valorV < 0){
+        cout << "Erro: o preco nao pode ser negativo." << endl;
+        return;
+    }
     do{
         cout << "Este produto é em unidade ou em kg?" << endl;
         cout << (opc == 0 ? ">  " : " ") << "KG\n";
         cout << (opc == 1 ? ">  " : " ") << "UNIDADE\n";
 
-        setas(tecla, opc, 2);
+        Setas(tecla, opc, 2);
         system("cls");
 
     }while(tecla != 13);
 
     p[qnt].unidade = opc;
 
-    cout << "digite a quantidade em estoque: " << endl;
+    cout << "Digite a quantidade em estoque: " << endl;
     if(p[qnt].unidade == 0){
-        p[qnt].quanti = lerDouble();
+        p[qnt].quanti = LerDouble();
     }else if(p[qnt].unidade == 1){
-        p[qnt].quanti = lerInteiro();
+        p[qnt].quanti = LerInteiro();
     };
+    if(p[qnt].quanti < 0){
+        cout << "Erro: a quantidade nao pode ser negativa." << endl;
+        return;
+    }
     
-    salvarProduto(p[qnt]);
+    SalvarProduto(p[qnt]);
 
 qnt++;
 
 }
-//PRONTO
-void ListarProdutos(produtos p[], int &qnt){
+//Exibe a lista completa de produtos cadastrados com código, nome, preço, quantidade e tipo
+void ListarProdutos(Produtos p[], int &qnt){
     cout << "--LISTA DE PRODUTOS--\n";
     cout << "COD | NOME | PRECO | QUANTIDADE | TIPO\n";
     for(int i=0; i<qnt; i++){
@@ -179,64 +240,93 @@ void ListarProdutos(produtos p[], int &qnt){
         cout << "(" << i+1<<") | " << p[i].nome << " |  R$:" << p[i].valorV << " | " << p[i].quanti << " | " << tipo << endl;  
     }
 }
-//PRONTO
-void apagarProd(produtos p[], int &qnt) {
+//Remove um produto do arquivo apenas com a confirmação do usuário
+void ApagarProd(Produtos p[], int &qnt) {
     if (qnt == 0) {
         cout << "Nenhum produto cadastrado." << endl;
+        system("pause");
         return;
-    }
+    }       
+    int opc=0;
+    char tecla;
+    bool sair= false; 
 
-    ListarProdutos(p, qnt);
+    while(!sair){
+        system("cls");
+        cout << "--- REMOVER PRODUTO ---\n\n";
 
-    int indice;
-    cout << "Digite o numero do produto que deseja remover: ";
-    cin >> indice;
-
-    if (indice < 1 || indice > qnt) {
-        cout << "Indice invalido!" << endl;
-        return;
-    }
-
-    string nomeRemover = p[indice-1].nome;
-
-    ifstream arquivo("produtos.txt");
-    ofstream temporario("produtos_temp.txt");
-
-    if (!arquivo.is_open() || !temporario.is_open()) {
-        cout << "Erro ao abrir arquivos." << endl;
-        return;
-    }
-
-    string linha;
-    bool removido = false;
-    string nome;
-
-    while (getline(arquivo, linha)) {
-        stringstream ss(linha);
-        getline(ss, nome, ';');
-
-        if (nomesIguais(nome, nomeRemover)) {
-            removido = true;
-            continue; // não grava
+        for(int i=0; i<qnt;i++){
+            cout << (opc == i ? ">  " : "  ");
+            string tipo = (p[i].unidade ? "UN" : "KG");
+            cout << p[i].nome << " - R$" << p[i].valorV << " - " << p[i].quanti << " " << tipo << endl;
         }
-        temporario << linha << endl;
-    }
+        cout << (opc == qnt ? ">  " : "  ") << "Voltar\n";
 
-    arquivo.close();
-    temporario.close();
+        Setas(tecla, opc, qnt +1);
+        
+        if(tecla == 13){
+            if(opc==qnt){
+                sair = true;
+                break;
+            }
 
-    remove("produtos.txt");
-    rename("produtos_temp.txt", "produtos.txt");
+            int confirmar = 0;
+            char teclaConfirmar;
+            do{
+                system("cls");
+                cout << "Tem certeza que deseja excluir '" << p[opc].nome << "'?\n\n";
+                cout << (confirmar == 0 ? ">  " : "  ") << "Sim\n";
+                cout << (confirmar == 1 ? ">  " : "  ") << "Nao\n";
 
-    if (removido) {
-        cout << "Produto removido com sucesso!" << endl;
-        carregarProdutos(p, qnt); // atualiza vetor
-    } else {
-        cout << "Erro: produto nao encontrado no arquivo!" << endl;
+                Setas(teclaConfirmar, confirmar, 2);
+            } while(teclaConfirmar != 13);
+            if(confirmar == 0){
+                string nomeRemover = p[opc].nome;
+                ifstream arquivo("produtos.txt");
+                ofstream temporario("produtos_temp.txt");
+
+                if(!arquivo.is_open() || !temporario.is_open()){
+                    cout << "Erro ao abrir os arquivos" << endl;
+                    system("pause");
+                    return;
+                }
+                string linha;
+                bool removido = false;
+
+                while(getline(arquivo, linha)){
+                stringstream ss(linha);
+                string nome, valorStr, unidadeStr, quantiStr;
+                    getline(ss, nome, ';');
+                    getline(ss, valorStr, ';');
+                    getline(ss, unidadeStr, ';');
+                    getline(ss, quantiStr, ';');
+
+                if(NomesIguais(nome, nomeRemover)){
+                    removido = true;
+                    continue;
+                }
+                temporario<<linha<<endl;
+            }
+            arquivo.close();
+            temporario.close(); 
+
+            remove("produtos.txt");
+            rename("produtos_temp.txt", "produtos.txt");
+
+            if(removido){
+                cout << "Produto removido com sucesso\n";
+                system("pause");
+                CarregarProdutos(p,qnt);
+            } else{
+                cout << "Erro: produto nao encontrado\n";
+                system("pause");
+                }
+            }
+        }
     }
 }
-//PRONTO
-void adcCarrinho(produtos p[], int &qnt){
+//Adiciona um produto ao carrinho, atualizando a quantidade em estoque e salvando em um arquivo temporario
+void AdcCarrinho(Produtos p[], int &qnt){
     if(qnt == 0){
         cout << "Nenhum produto no estoque.\n";
         system("pause");
@@ -265,7 +355,7 @@ void adcCarrinho(produtos p[], int &qnt){
             cout << p[i].nome << " - R$" << p[i].valorV << " - " << p[i].quanti << " - " << tipo << endl;
         }
 
-        setas(tecla, opc, qnt);
+        Setas(tecla, opc, qnt);
 
     } while(tecla != 13); // Enter seleciona
 
@@ -273,9 +363,9 @@ void adcCarrinho(produtos p[], int &qnt){
     float quant;
     cout << "Digite a quantidade desejada: ";
     if(p[cod].unidade == 1){
-        quant = lerInteiro();
+        quant = LerInteiro();
     }else if(p[cod].unidade == 0){
-        quant = lerDouble();
+        quant = LerDouble();
         
     }
     if(quant <= 0 || quant > p[cod].quanti){
@@ -300,94 +390,235 @@ void adcCarrinho(produtos p[], int &qnt){
     cout << "Produto adicionado ao carrinho!\n";
     system("pause");
 }
-//parcialmente, falta a parte da separação dos meses
-void finalizarCompra() {
+//Exibe todos os itens presentes no carrinho temporário, mostrando subtotal e total parcial
+void VerCarrinho(){
+  ifstream temp("compra_temp.txt");
+  if(!temp.is_open()){
+    cout << "Carrinho vazio.\n";
+    system("pause");
+    return; 
+  }
+
+  string linha;
+  double total=0;
+  cout << "\n--- ITENS NO CARRINHO ---\n";
+  while(getline(temp, linha)){
+    stringstream ss(linha);
+    string nome, precoStr, unidadeStr, qtdStr;
+
+        getline(ss, nome, ';');
+        getline(ss, precoStr, ';');
+        getline(ss, unidadeStr, ';');
+        getline(ss, qtdStr, ';');
+
+        double preco, qtd;
+        stringstream(precoStr) >> preco;
+        stringstream(qtdStr) >> qtd; 
+
+        double subtotal = preco * qtd;
+        total += subtotal;
+
+        cout << nome << " | " << qtd << " | x R$" << preco << " = R$" << subtotal << endl;
+  }
+  cout << "-----------------------------\n";
+  cout << "Total parcial: R$ " << total << endl;
+
+  temp.close();
+  system("pause"); 
+}
+//Remove itens do carrinho temporário
+void RemoverDoCarrinho(){
+
+    ifstream temp("compra_temp.txt");
+    if(!temp.is_open()){
+        cout << "Carrinho vazio\n";
+        system("pause");
+        return;
+    }
+
+    struct itemCarrinho{
+        string nome;
+        double preco;
+        bool unidade;
+        double quant;
+    };
+
+    itemCarrinho carrinho[MAX]; 
+    int qnt = 0;
+    string linha;
+
+    while(getline(temp, linha)){
+        stringstream ss(linha);
+        string nome, precoStr, unidadeStr, qtdStr;
+
+        getline(ss, nome, ';');
+        getline(ss, precoStr, ';');
+        getline(ss, unidadeStr, ';');
+        getline(ss, qtdStr, ';');
+
+        stringstream(precoStr) >> carrinho[qnt].preco;
+        stringstream(unidadeStr) >> carrinho[qnt].unidade;
+        stringstream(qtdStr) >> carrinho[qnt].quant;
+        carrinho[qnt].nome = nome;
+        qnt++;
+    }
+    temp.close();
+
+    if(qnt==0){
+        cout << "Carrinho vazio\n";
+        system("pause");
+        return;
+    }
+    int opc=0;
+    char tecla;
+    bool sair = false;
+
+    while(!sair){
+        system("cls");
+        cout << "--- REMOVER ITEM DO CARRINHO ---\n";
+        for(int i = 0; i < qnt; i++){
+            cout << (opc == i ? "> ": "  ");
+            cout << carrinho[i].nome << " - R$" << carrinho[i].preco << " x " << carrinho[i].quant << endl; 
+        }
+        cout << (opc == qnt ? "> " : "  ") << "Voltar\n";
+
+        Setas(tecla, opc, qnt+1);
+
+        if(tecla == 13){
+            if(opc==qnt){
+                sair = true;
+            } else{
+                for(int j = opc; j < qnt-1; j++) 
+                carrinho[j] = carrinho [j+1];
+                qnt--;
+                cout << "Item removido\n";
+                system("pause");
+                if(qnt==0) sair=true;
+            }
+        }
+    }
+
+    ofstream tempOut("compra_temp.txt");
+    for(int i=0;i<qnt;i++)
+    tempOut << carrinho[i].nome << ";" << carrinho[i].preco << ";" << carrinho[i].unidade << ";" << carrinho[i].quant << endl;
+    tempOut.close();
+}
+//Permite ao usuário escolher a forma de pagamento (à vista com desconto ou parcelado)
+int MetodoPagamento(){
+    int opc=0;
+    char tecla;
+    string metodos[] = {"A vista (5% de desconto)","Parcelado em ate 12x"};
+
+    int total=2; 
+
+    do{
+        system("cls");
+        cout << "--- FORMA DE PAGAMENTO ---\n\n";
+            for(int i=0; i<total;i++){
+                cout << (opc==i ? "> " : "  ") << metodos[i] << endl;
+            }
+
+        Setas(tecla,opc, total);
+    } while(tecla !=13);
+
+    return opc; 
+}
+//Calcula total, aplica desconto ou juros, gera parcelas, registra no histórico e limpa carrinho
+void FinalizarCompra() {
     ifstream temp("compra_temp.txt");
     if (!temp.is_open()) {
         cout << "Nenhuma compra em andamento!\n";
         system("pause");
         return;
     }
-
-    string metodoPagamento;
-    int opc = 0;
-    char tecla;
-    while(tecla != 13){
-        system("cls");
-        cout << "Selecione o metodo de pagamento: \n";
-        cout << (opc == 0 ? "> ": " ") << "A Vista (5% de desconto)\n";
-        cout << (opc == 1 ? "> ": " ") << "Em 3 vezes (sem juros)\n";
-        cout << (opc == 2 ? "> ": " ") << "Em 12 vezes (10% de juros)\n";
-
-        setas(tecla, opc, 3);
-        
-        if(opc == 0){
-            metodoPagamento = "A Vista";
-        }else if(opc == 1){
-            metodoPagamento = "Em 3x sem juros";
-        }else if(opc == 2){
-            metodoPagamento = "Em 12x com 10% de juros";
-        };
-    }
-
-    ofstream log("historico_vendas.txt", ios::app);
-    if (!log.is_open()) {
-        cout << "Erro ao abrir log de vendas!\n";
-        return;
-    }
     
-    cout << "===== VENDA FINALIZADA =====\n";
-    log << "===== VENDA FINALIZADA =====\n";
-    cout << "Data/Hora: " << getHorarioAtual() << "\n";
-    log << "Data/Hora: " << getHorarioAtual() << "\n";
-    
-
     string linha;
     double total = 0;
+
+    cout << "\n--- ITENS DA COMPRA ---\n";
+
     while (getline(temp, linha)) {
        stringstream ss(linha);
-        string nome, valorStr, unidadeStr, quantiStr;
-        double preco;
-        float qtd;
+        string nome, precoStr, unidadeStr, qtdStr;
+        double preco, qtd;
 
-        if(getline(ss, nome, ';') && getline(ss, valorStr, ';') && getline(ss, unidadeStr, ';') && getline(ss, quantiStr, ';')){
-            stringstream ss1(valorStr);
-            ss1 >> preco;
+        getline(ss, nome, ';');
+        getline(ss, precoStr, ';');
+        getline(ss, unidadeStr, ';');
+        getline(ss, qtdStr, ';');
 
-            stringstream ss2(quantiStr);
-            ss2 >> qtd;
-        }
+        stringstream(precoStr) >> preco;
+        stringstream(qtdStr) >> qtd;
 
         double subtotal = qtd * preco;
         total += subtotal;
 
 
-        cout << nome << " | " << qtd << " | R$ " << subtotal << "\n";
-        log << nome << " | " << qtd << " | R$ " << subtotal << "\n";
+        cout << nome << " | " << qtd << " x R$" << preco << " = R$" << subtotal << "\n";
     }
-        if(opc == 0){
-            total *= 0.95;
-        }else if(opc == 2){
-            total *= 1.10;
-        };
-
-    cout << "Total: R$ " << total << endl;
-    log << "Total: R$ " << total << endl;
-    cout << "Metodo de pagamento: " << metodoPagamento << endl;
-    log << "Metodo de pagamento: " << metodoPagamento << endl;
-    cout << "=============================\n\n";
-    log << "=============================\n\n";
-
-    log.close();
     temp.close();
+    
+    int forma = MetodoPagamento();
 
-    remove("compra_temp.txt"); // apaga temporário
+    double valorFinal;
+    int parcelas = 1;
 
-    cout << "Compra finalizada com sucesso!\n";
+    if(forma == 0){
+        valorFinal = total * 0.95;
+        parcelas = 1;
+    }else if(forma == 1){
+        cout << "Digite o numero de parcelas (ate 3x sem juros, apos isso, ate em 12x com 10% de juros):" << endl;
+        parcelas = LerInteiro();
+        if(parcelas < 1) parcelas = 1;
+        if(parcelas > 12) parcelas = 12;
+        if(parcelas >= 1 && parcelas <= 3) valorFinal = total;
+        if(parcelas >= 4 && parcelas <= 12) valorFinal = total * 1.10;
+    }
+
+    double valorParcela = valorFinal / parcelas;
+    time_t agora = time(0);
+    tm *ltm = localtime(&agora);
+    if(forma == 1){
+        cout << "\n--- RESUMO DO PAGAMENTO ---\n";
+        cout << "Total original: R$ " << total <<endl;
+        cout << "Total final: R$ " << valorFinal << endl;
+        cout << "Parcelas: " << parcelas << "x de R$ " << valorParcela << endl;
+        cout << "------------------------------\n";
+        for (int i = 0; i < parcelas; i++) {
+            tm vencimento = AdicionarMeses(*ltm, i);
+            char buffer[20];
+            strftime(buffer, sizeof(buffer), "%d/%m/%Y", &vencimento);
+            cout << "Parcela " << i+1 << ": R$ " << valorParcela << " - Vencimento: " << buffer << endl;
+        }
+    }else{
+        cout << "\n--- RESUMO DO PAGAMENTO ---\n";
+        cout << "Total original: R$ " << total <<endl;
+        cout << "Total final: R$ " << valorFinal << endl;
+        cout << "------------------------------\n";
+    }
+
+    ofstream log("historico_vendas.txt", ios::app);
+    log << "===== VENDA FINALIZADA =====\n";
+    log << "Data/Hora: " << GetHorarioAtual() << "\n";
+    log << "Total original: R$ " << total << "\n";
+    log << "Total final: R$ " << valorFinal << "\n";
+    log << "Parcelas: " << parcelas << "x de R$ " << valorParcela << "\n";
+    
+    for (int i = 0; i < parcelas; i++) {
+        tm vencimento = AdicionarMeses(*ltm, i);
+        char buffer[20];
+        strftime(buffer, sizeof(buffer), "%d/%m/%Y", &vencimento);
+        log << "Parcela " << i+1 << ": R$ " << valorParcela << " - Vencimento: " << buffer << "\n";
+    }
+    log << "=============================\n\n";
+    log.close();
+
+    remove("compra_temp.txt"); // limpa carrinho
+    cout << "\nCompra finalizada com sucesso!\n";
     system("pause");
 }
-//PRONTO
-void logVendas(){
+//Exibe o histórico completo de vendas registradas no arquivo
+void LogVendas(){
     ifstream log("historico_vendas.txt");
     if(!log.is_open()){
         cout << "Nenhuma venda registrada ainda\n";
@@ -400,13 +631,14 @@ void logVendas(){
     while(getline(log, linha)){
         cout << linha << endl;
     }
+    cout << "\n===================================\n";
 
     log.close();
     system("pause");
 
 }
-//PRONTO
-void maioresVendas() {
+//Exibe os produtos mais vendidos, contabilizando a quantidade total de cada item registrado no histórico
+void MaioresVendas() {
     ifstream log("historico_vendas.txt");
     if (!log.is_open()) {
         cout << "Nenhuma venda registrada ainda.\n";
@@ -417,7 +649,6 @@ void maioresVendas() {
     string nomes[MAX];
     int qntds[MAX];
     int totalProdutos = 0;
-    double totalVendas = 0;
 
     string linha;
     while (getline(log, linha)) {
@@ -453,7 +684,6 @@ void maioresVendas() {
                 qntds[totalProdutos] = qtd;
                 totalProdutos++;
             }
-            totalVendas += subtotal;
         }
     }
 
@@ -462,20 +692,19 @@ void maioresVendas() {
         cout << nomes[i] << " -> " << qntds[i] << " unidades vendidas\n";
     }
     cout << "==============================\n";
-    cout << "Total arrecadado com as vendas R$ "<< totalVendas << "\n(Ignorando juros ou descontos)\n";
-
+    
     log.close();
     system("pause");
 }
-//PRONTO
-void produtosEmFalta(produtos p[], int &qnt){
+//Lista produtos onde o estoque está abaixo de uma quantidade mínima fornecida
+void ProdutosEmFalta(Produtos p[], int &qnt){
     bool faltando = false;
     cout << "\nDigite a quantidade minima que quer consultar: ";
-    int qntMin = lerInteiro();
+    int qntMin = LerInteiro();
     string unidade;
 
     // Vetor auxiliar só com os produtos filtrados
-    produtos filtrados[MAX];
+    Produtos filtrados[MAX];
     int qntFiltrados = 0;
 
     for (int i = 0; i < qnt; i++) {
@@ -496,7 +725,7 @@ void produtosEmFalta(produtos p[], int &qnt){
     for (int i = 0; i < qntFiltrados - 1; i++) {
         for (int j = 0; j < qntFiltrados - i - 1; j++) {
             if (filtrados[j].quanti > filtrados[j+1].quanti) {
-                produtos temp = filtrados[j];
+                Produtos temp = filtrados[j];
                 filtrados[j] = filtrados[j+1];
                 filtrados[j+1] = temp;
             }
@@ -518,8 +747,8 @@ void produtosEmFalta(produtos p[], int &qnt){
     cout << "=========================\n";
     system("pause");
 }
-//PRONTO
-void MenuRelatorios(produtos p[], int qnt){
+//Menu interativo para acessar relatório de venda e estoque
+void MenuRelatorios(Produtos p[], int qnt){
         int opc = 1;
         char tecla;
         bool sair = false;
@@ -532,46 +761,50 @@ while(!sair){
     cout << (opc == 3 ? ">  " : " ") << "Produtos em falta\n";
     cout << (opc == 0 ? ">  " : " ") << "Voltar";
 
-    setas(tecla, opc, 4);
+    Setas(tecla, opc, 4);
     if(tecla == 13){
     switch(opc){
 
-        case 1: logVendas(); break;
-        case 2: maioresVendas(); break;
-        case 3: produtosEmFalta(p, qnt); break;
+        case 1: LogVendas(); break;
+        case 2: MaioresVendas(); break;
+        case 3: ProdutosEmFalta(p, qnt); break;
         case 0: sair=true; break;
             }
         }
     } 
     
 }
-//PRONTO
-void MenuVendas(produtos p[], int &qnt){
+//Menu interativo para adicionar ao carrinho, visualizar, finalizar ou remover itens
+void MenuVendas(Produtos p[], int &qnt){
     char tecla; 
     int opc = 1;
-    bool sair=false; 
+    bool sair = false; 
 while(!sair){
     system("cls");
     cout << "                                  MNPDV-02\n";
     cout << "---MENU VENDAS---\n";
     cout << (opc == 1 ? ">  " : " ") << "Adcionar ao carrinho\n";
-    cout << (opc == 2 ? ">  " : " ") << "Finalizar compra \n";
+    cout << (opc == 2 ? ">  " : " ") << "Visualizar carrinho\n";
+    cout << (opc == 3 ? ">  " : " ") << "Finalizar compra\n";
+    cout << (opc == 4 ? ">  " : " ") << "Remover item do carrinho\n";
     cout << (opc == 0 ? ">  " : " ") << "Voltar\n";
     
-    setas(tecla, opc, 3);
+    Setas(tecla, opc, 5);
 
     if(tecla == 13){
        switch(opc){
 
-        case 1: adcCarrinho(p, qnt); break;
-        case 2: finalizarCompra(); break;
+        case 1: AdcCarrinho(p, qnt); break;
+        case 2: VerCarrinho(); break;
+        case 3: FinalizarCompra(); break;
+        case 4: RemoverDoCarrinho(); break;
         case 0: sair = true; break;
             }
         }
     }
 }
-//PRONTO
-void MENUProdutos(produtos p[], int &qnt){
+//Menu interativo para cadastrar, listar ou remover produtos
+void MENUProdutos(Produtos p[], int &qnt){
     int opc=1;
     char tecla; 
     bool sair=false;
@@ -584,59 +817,54 @@ while(!sair){
     cout << (opc == 3 ? ">  " : " ")<< "Remover item \n";
     cout << (opc == 0 ? ">  " : " ")<< "Voltar     \n";
     
-    setas(tecla, opc, 4);
+    Setas(tecla, opc, 4);
     if(tecla == 13){
        switch(opc){
 
-        case 1: cadastro(p, qnt); system("pause"); break;
+        case 1: Cadastro(p, qnt); system("pause"); break;
         case 2: ListarProdutos(p, qnt); system("pause"); break;
-        case 3: apagarProd(p, qnt); system("pause"); break;
+        case 3: ApagarProd(p, qnt); system("pause"); break;
         case 0: sair = true;break;
         default: cout << "Opcao invalida\n"; system("pause"); break;
             }
         }
     };
 }
-//PRONTO
-void MENU(int &opc){
+//Menu principal do sistema, onde pode escolher entre Produtos, Vendas, Relatorios ou Sair
+int MENU(){
     char tecla;
-    opc = 1;
+    int opc = 1;
 
-    do{
+    while(true){
 
-    system("cls");
-    cout << "                                MNSP-01\n";
-    cout << "---MENU SUPERMERCADO---\n";
-    cout << (opc == 1 ? ">  " : " ") << "Produtos\n";
-    cout << (opc == 2 ? ">  " : " ") << "Vendas\n";
-    cout << (opc == 3 ? ">  " : " ") << "Relatorios\n";
-    cout << (opc == 0 ? ">  " : " ") << "Sair\n";
+        system("cls");
+        cout << "                                MNSP-01\n";
+        cout << "---MENU SUPERMERCADO---\n";
+        cout << (opc == 1 ? ">  " : " ") << "Produtos\n";
+        cout << (opc == 2 ? ">  " : " ") << "Vendas\n";
+        cout << (opc == 3 ? ">  " : " ") << "Relatorios\n";
+        cout << (opc == 0 ? ">  " : " ") << "Sair\n";
     
-    setas(tecla, opc, 4);
-    }while (tecla != 13); 
+        Setas(tecla, opc, 4);
+        if(tecla == 13){
+            return opc;
+        }
+    }
 }
-//PRONTO
+
 int main(){
-    produtos v[MAX];
+    Produtos v[MAX];
     int qnt=0;
-    int opc; 
     
-    carregarProdutos(v, qnt);
+    CarregarProdutos(v, qnt);
 
-    do{
-        MENU(opc); 
-
-    switch (opc){
+    while(true){
+        int opc = MENU();
+        switch (opc){
         case 1: MENUProdutos(v, qnt); break;
         case 2: MenuVendas(v, qnt); break;
         case 3: MenuRelatorios(v, qnt); break;
-        case 0:
-            cout << "Obrigado por acessar!" <<endl; 
-            break;
-        default: 
-            cout << "Opcao invalida."<<endl;
+        case 4: cout << "Saindo..."; return 0;
         }
-    }while(opc !=0);
-
-    return 0;
+    }
 }
