@@ -82,14 +82,14 @@ double LerDouble(){
 }
 //Lê a tecla apertada, e atualiza a opc referente ao valor da tecla
 void Setas(char &tecla, int &opc, int maxOpc) {
-    tecla = getch();
+    tecla = getch();//lê tecla pressionada
 
     if (tecla == 72) { // cima
         opc--;
-        if(opc < 0) opc = maxOpc -1; 
+        if(opc < 0) opc = maxOpc -1;// vai pra ultima posição caso passe do topo
     } else if (tecla == 80) { // baixo
         opc++; 
-        if(opc >= maxOpc) opc = 0; 
+        if(opc >= maxOpc) opc = 0;// vai pra primeira posição caso passe do fim
 }
 }
 //Salva o produto no arquivo "produtos.txt"
@@ -360,7 +360,7 @@ void AdcCarrinho(Produtos p[], int &qnt){
     }else if(p[cod].unidade == 0){
         quant = LerDouble();
     }
-    if(quant > p[cod].quanti){
+    if(quant > p[cod].quanti){//verifica se quantidade é maior que estoque
         cout << "Quantidade invalida.\n";
         system("pause");
         return;
