@@ -50,10 +50,14 @@ int LerInteiro(){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
             cout << "Entrada invalida, digite um numero inteiro: ";
-        } else{
+            continue;
+        }
+        if(valor <= 0){
+            cout << "Entrada invalida, nao pode ser zero ou menor que zero: ";
+            continue;
+        }
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
             return valor; 
-        }
     }
 }
 //Lê e retorna um número double validando a entrada
@@ -65,10 +69,15 @@ double LerDouble(){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(),'\n');
             cout << "Entrada invalida, digite um numero: ";
-        }else{
+            continue;
+        }
+
+        if(valor <= 0){
+            cout << "Entrada invalida, nao pode ser zero ou menor que zero: ";
+            continue;
+        }
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return valor;
-        }
     }
 }
 //Lê a tecla apertada, e atualiza a opc referente ao valor da tecla
@@ -168,10 +177,6 @@ void Cadastro(Produtos p[], int &qnt){
                         cout << "Digiter o preco do produto:" << endl;
                         p[i].valorV = LerDouble();
 
-                        if(p[i].valorV < 0){
-                            cout << "Erro: o preco nao pode ser negativo." << endl;
-                            return;
-                        }
                         cout << "Digite a quantidade em estoque:" << endl;
                         if(p[i].unidade == 0){
                             p[i].quanti = LerDouble();
@@ -179,10 +184,6 @@ void Cadastro(Produtos p[], int &qnt){
                         }else if(p[i].unidade == 1){
                             p[i].quanti = LerInteiro();
 
-                            if(p[i].quanti < 0){
-                                cout << "Erro: a quantidade nao pode ser negativa." << endl;
-                                return;
-                            }
                         }
                     }
             return;
@@ -194,10 +195,6 @@ void Cadastro(Produtos p[], int &qnt){
     cout << "Digite o preco do produto: " << endl;
     p[qnt].valorV = LerDouble();
 
-    if(p[qnt].valorV < 0){
-        cout << "Erro: o preco nao pode ser negativo." << endl;
-        return;
-    }
     do{
         cout << "Este produto é em unidade ou em kg?" << endl;
         cout << (opc == 0 ? ">  " : " ") << "KG\n";
@@ -216,10 +213,6 @@ void Cadastro(Produtos p[], int &qnt){
     }else if(p[qnt].unidade == 1){
         p[qnt].quanti = LerInteiro();
     };
-    if(p[qnt].quanti < 0){
-        cout << "Erro: a quantidade nao pode ser negativa." << endl;
-        return;
-    }
     
     SalvarProduto(p[qnt]);
 
@@ -366,19 +359,18 @@ void AdcCarrinho(Produtos p[], int &qnt){
         quant = LerInteiro();
     }else if(p[cod].unidade == 0){
         quant = LerDouble();
-        
     }
-    if(quant <= 0 || quant > p[cod].quanti){
+    if(quant > p[cod].quanti){
         cout << "Quantidade invalida.\n";
         system("pause");
         return;
     };
-    // Salva no carrinho temporário
+    //Salva no carrinho temporário
     ofstream temp("compra_temp.txt", ios::app);
     temp << p[cod].nome << ";" << p[cod].valorV << ";" << p[cod].unidade << ";" << quant << endl;
     temp.close();
 
-    // Atualiza estoque
+    //Atualiza estoque
     p[cod].quanti -= quant;
     ofstream arquivo("produtos.txt");
     for(int i = 0; i < qnt; i++){
@@ -721,7 +713,7 @@ void ProdutosEmFalta(Produtos p[], int &qnt){
         return;
     }
 
-    // Ordenar os filtrados por quantidade (Bubble Sort)
+    //Ordenar os filtrados por quantidade (Bubble Sort)
     for (int i = 0; i < qntFiltrados - 1; i++) {
         for (int j = 0; j < qntFiltrados - i - 1; j++) {
             if (filtrados[j].quanti > filtrados[j+1].quanti) {
@@ -732,7 +724,7 @@ void ProdutosEmFalta(Produtos p[], int &qnt){
         }
     }
 
-    // Mostrar os produtos em falta
+    //Mostrar os produtos em falta
     cout << "\n-- PRODUTOS EM FALTA (ordenados) --\n";
     cout << "NOME | PRECO | QUANTIDADE | UNIDADE\n";
     for (int i = 0; i < qntFiltrados; i++) {
@@ -864,7 +856,7 @@ int main(){
         case 1: MENUProdutos(v, qnt); break;
         case 2: MenuVendas(v, qnt); break;
         case 3: MenuRelatorios(v, qnt); break;
-        case 4: cout << "Saindo..."; return 0;
+        case 0: cout << "Saindo..."; return 0;
         }
     }
 }
