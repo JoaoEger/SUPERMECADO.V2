@@ -38,9 +38,15 @@ struct Produtos
 {
     string nome; 
     float quanti; 
-    double valorV; 
+    float valorV; 
     bool unidade;
 };
+// Compara nomes de produtos ignorando maiúsculas e minúsculas
+bool NomesIguais(string a, string b) {
+    transform(a.begin(), a.end(), a.begin(), ::tolower);
+    transform(b.begin(), b.end(), b.begin(), ::tolower);
+    return a == b;
+}
 //Lê e retorna um número inteiro validando a entrada
 int LerInteiro(){
     int valor; 
@@ -56,13 +62,14 @@ int LerInteiro(){
             cout << "Entrada invalida, nao pode ser zero ou menor que zero: ";
             continue;
         }
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
-            return valor; 
+        
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        return valor; 
     }
 }
-//Lê e retorna um número double validando a entrada
-double LerDouble(){
-    double valor;
+//Lê e retorna um número float validando a entrada
+float LerFloat(){
+    float valor;
     while(true){
         cin >> valor;
         if(cin.fail()){
@@ -72,12 +79,20 @@ double LerDouble(){
             continue;
         }
 
+        char proximo = cin.peek();
+        if (proximo != '\n' && proximo != ' ') {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Entrada invalida (use apenas um ponto decimal): ";
+            continue;
+        }
+
         if(valor <= 0){
             cout << "Entrada invalida, nao pode ser zero ou menor que zero: ";
             continue;
         }
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return valor;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return valor;
     }
 }
 //Lê a tecla apertada, e atualiza a opc referente ao valor da tecla
@@ -90,7 +105,7 @@ void Setas(char &tecla, int &opc, int maxOpc) {
     } else if (tecla == 80) { // baixo
         opc++; 
         if(opc >= maxOpc) opc = 0;// vai pra primeira posição caso passe do fim
-}
+    }
 }
 //Salva o produto no arquivo "produtos.txt"
 void SalvarProduto(Produtos &p){
@@ -137,12 +152,6 @@ void CarregarProdutos(Produtos p[], int &qnt) {
 
     arquivo.close();
 }
-// Compara nomes de produtos ignorando maiúsculas e minúsculas
-bool NomesIguais(string a, string b) {
-    transform(a.begin(), a.end(), a.begin(), ::tolower);
-    transform(b.begin(), b.end(), b.begin(), ::tolower);
-    return a == b;
-}
 //Cadastra um novo produto ou atualiza um existente, validando nome, preço, tipo e quantidade
 void Cadastro(Produtos p[], int &qnt){
     string nomeTempor;
@@ -175,11 +184,11 @@ void Cadastro(Produtos p[], int &qnt){
                 }while(tecla != 13);
                     if(opc == 1){
                         cout << "Digiter o preco do produto:" << endl;
-                        p[i].valorV = LerDouble();
+                        p[i].valorV = LerFloat();
 
                         cout << "Digite a quantidade em estoque:" << endl;
                         if(p[i].unidade == 0){
-                            p[i].quanti = LerDouble();
+                            p[i].quanti = LerFloat();
 
                         }else if(p[i].unidade == 1){
                             p[i].quanti = LerInteiro();
@@ -193,7 +202,7 @@ void Cadastro(Produtos p[], int &qnt){
     char tecla;
     p[qnt].nome = nomeTempor;
     cout << "Digite o preco do produto: " << endl;
-    p[qnt].valorV = LerDouble();
+    p[qnt].valorV = LerFloat();
 
     do{
         cout << "Este produto é em unidade ou em kg?" << endl;
@@ -209,7 +218,7 @@ void Cadastro(Produtos p[], int &qnt){
 
     cout << "Digite a quantidade em estoque: " << endl;
     if(p[qnt].unidade == 0){
-        p[qnt].quanti = LerDouble();
+        p[qnt].quanti = LerFloat();
     }else if(p[qnt].unidade == 1){
         p[qnt].quanti = LerInteiro();
     };
@@ -358,9 +367,9 @@ void AdcCarrinho(Produtos p[], int &qnt){
     if(p[cod].unidade == 1){
         quant = LerInteiro();
     }else if(p[cod].unidade == 0){
-        quant = LerDouble();
+        quant = LerFloat();
     }
-    if(quant > p[cod].quanti){//verifica se quantidade é maior que estoque
+    if(quant > p[cod].quanti){// verifica se quantidade é maior que estoque
         cout << "Quantidade invalida.\n";
         system("pause");
         return;
@@ -419,7 +428,7 @@ void VerCarrinho(){
   system("pause"); 
 }
 //Remove itens do carrinho temporário
-void RemoverDoCarrinho(){
+void RemoverDoCarrinho(Produtos p[], int qntProdutos){
 
     ifstream temp("compra_temp.txt");
     if(!temp.is_open()){
@@ -436,7 +445,7 @@ void RemoverDoCarrinho(){
     };
 
     itemCarrinho carrinho[MAX]; 
-    int qnt = 0;
+    int qntCarrinho= 0;
     string linha;
 
     while(getline(temp, linha)){
@@ -448,15 +457,15 @@ void RemoverDoCarrinho(){
         getline(ss, unidadeStr, ';');
         getline(ss, qtdStr, ';');
 
-        stringstream(precoStr) >> carrinho[qnt].preco;
-        stringstream(unidadeStr) >> carrinho[qnt].unidade;
-        stringstream(qtdStr) >> carrinho[qnt].quant;
-        carrinho[qnt].nome = nome;
-        qnt++;
+        stringstream(precoStr) >> carrinho[qntCarrinho].preco;
+        stringstream(unidadeStr) >> carrinho[qntCarrinho].unidade;
+        stringstream(qtdStr) >> carrinho[qntCarrinho].quant;
+        carrinho[qntCarrinho].nome = nome;
+        qntCarrinho++;
     }
     temp.close();
 
-    if(qnt==0){
+    if(qntCarrinho==0){
         cout << "Carrinho vazio\n";
         system("pause");
         return;
@@ -468,30 +477,49 @@ void RemoverDoCarrinho(){
     while(!sair){
         system("cls");
         cout << "--- REMOVER ITEM DO CARRINHO ---\n";
-        for(int i = 0; i < qnt; i++){
+        for(int i = 0; i < qntCarrinho; i++){
             cout << (opc == i ? "> ": "  ");
             cout << carrinho[i].nome << " - R$" << carrinho[i].preco << " x " << carrinho[i].quant << endl; 
         }
-        cout << (opc == qnt ? "> " : "  ") << "Voltar\n";
+        cout << (opc == qntCarrinho ? "> " : "  ") << "Voltar\n";
 
-        Setas(tecla, opc, qnt+1);
+        Setas(tecla, opc, qntCarrinho+1);
 
         if(tecla == 13){
-            if(opc==qnt){
+            if(opc==qntCarrinho){
                 sair = true;
             } else{
-                for(int j = opc; j < qnt-1; j++) 
-                carrinho[j] = carrinho [j+1];
-                qnt--;
-                cout << "Item removido\n";
+                for(int i=0; i<qntProdutos; i++){
+                    if(NomesIguais(p[i].nome, carrinho[opc].nome)){
+                        p[i].quanti += carrinho[opc].quant;
+                        break;
+                    }
+                }
+                for(int j=opc; j<qntCarrinho-1;j++){
+                    carrinho[j] = carrinho[j+1];
+                }
+                qntCarrinho--;
+
+                // Atualizar arquivo produtos.txt
+                ofstream arquivo("produtos.txt");
+                for(int i = 0; i < qntProdutos; i++){
+                    if(!p[i].nome.empty())
+                        arquivo << p[i].nome << ";" << p[i].valorV << ";" << p[i].unidade << ";" << p[i].quanti << endl;
+                }
+                arquivo.close();
+
+                ofstream tempOut("compra_temp.txt");
+                for(int i=0;i<qntCarrinho;i++)
+                tempOut << carrinho[i].nome << ";" << carrinho[i].preco << ";" << carrinho[i].unidade << ";" << carrinho[i].quant << endl;
+                tempOut.close();
+                cout << "Item removido e estoque atualizado!\n";
                 system("pause");
-                if(qnt==0) sair=true;
             }
         }
     }
 
     ofstream tempOut("compra_temp.txt");
-    for(int i=0;i<qnt;i++)
+    for(int i=0;i<qntCarrinho;i++)
     tempOut << carrinho[i].nome << ";" << carrinho[i].preco << ";" << carrinho[i].unidade << ";" << carrinho[i].quant << endl;
     tempOut.close();
 }
@@ -526,11 +554,14 @@ void FinalizarCompra() {
     
     string linha;
     double total = 0;
+    bool carrinhoVazio = true;
 
     cout << "\n--- ITENS DA COMPRA ---\n";
 
     while (getline(temp, linha)) {
-       stringstream ss(linha);
+        if(linha.empty()) continue;
+            carrinhoVazio = false;
+        stringstream ss(linha);
         string nome, precoStr, unidadeStr, qtdStr;
         double preco, qtd;
 
@@ -549,6 +580,12 @@ void FinalizarCompra() {
         cout << nome << " | " << qtd << " x R$" << preco << " = R$" << subtotal << "\n";
     }
     temp.close();
+
+    if (carrinhoVazio) { 
+        cout << "Carrinho vazio! Nao e possivel finalizar a compra.\n";
+        system("pause");
+        return;
+    }
     
     int forma = MetodoPagamento();
 
@@ -789,7 +826,7 @@ while(!sair){
         case 1: AdcCarrinho(p, qnt); break;
         case 2: VerCarrinho(); break;
         case 3: FinalizarCompra(); break;
-        case 4: RemoverDoCarrinho(); break;
+        case 4: RemoverDoCarrinho(p, qnt); break;
         case 0: sair = true; break;
             }
         }

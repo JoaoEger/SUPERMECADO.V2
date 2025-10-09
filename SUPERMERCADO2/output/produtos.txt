@@ -1,6 +1,0 @@
-japa;10;0;1
-feijao carioca;10;0;6
-feijao sla;20;0;8
-maca louca;10;0;9
-maca;10;0;10
-sagu de vinho;10;1;20

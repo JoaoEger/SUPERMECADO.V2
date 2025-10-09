@@ -306,3 +306,27 @@ Parcela 11: R$ 1.83333 - Vencimento: 05/08/2026
 Parcela 12: R$ 1.83333 - Vencimento: 05/09/2026
 =============================
 
+===== VENDA FINALIZADA =====
+Data/Hora: 08/10/2025 23:47:36
+Total original: R$ 0
+Total final: R$ 0
+Parcelas: 1x de R$ 0
+Parcela 1: R$ 0 - Vencimento: 08/10/2025
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 08/10/2025 23:48:24
+Total original: R$ 0
+Total final: R$ 0
+Parcelas: 1x de R$ 0
+Parcela 1: R$ 0 - Vencimento: 08/10/2025
+=============================
+
+===== VENDA FINALIZADA =====
+Data/Hora: 09/10/2025 07:16:09
+Total original: R$ 0
+Total final: R$ 0
+Parcelas: 1x de R$ 0
+Parcela 1: R$ 0 - Vencimento: 09/10/2025
+=============================
+
